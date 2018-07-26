@@ -1,5 +1,6 @@
 package com.awantunai.bank.model;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -7,6 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Entity
@@ -18,10 +20,15 @@ public class Account{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // @NotBlank
-    private String acc_number;
+    // private User user;
 
-    // @NotBlank
+    @NotNull(message = "Account Number can not be null")
+    private String accNumber;
+
+    @NotNull(message = "Pin can not be null")
+    private String accPin;
+
+    @NotNull(message = "Initial Balance can not be null")
     private Integer balance;
 
     @Column(nullable = false, updatable = false)
@@ -34,12 +41,31 @@ public class Account{
     @LastModifiedDate
     private Date updatedAt;
 
+
+    // @ManyToOne
+    // @JoinColumn(name = "user_id")
+    // public User getUser() {
+    //   return user;
+    // }
+
+    // public void setUser(User user) {
+    //   this.user = user;
+    // }
+
     public String getAccNumber() {
-      return acc_number;
+      return accNumber;
     }
 
-    public void setAccNumber(String acc_number) {
-      this.acc_number = acc_number;
+    public void setAccNumber(String accNumber) {
+      this.accNumber = accNumber;
+    }
+
+    public String getAccPin() {
+      return accPin;
+    }
+
+    public void setAccPin(String accPin) {
+      this.accPin = accPin;
     }
 
     public Integer getBalance() {
