@@ -16,38 +16,50 @@ public class AccountController {
     @Autowired
     AccountRepository accountRepository;
 
-    // Get All Notes
+    // Get All Accounts
     @GetMapping("/accounts")
     public List<Account> getAllAccount() {
       return accountRepository.findAll();
     }
 
-    // Create a new Note
+    // Create an Account
     @PostMapping("/accounts")
     public Account createAccount(@Valid @RequestBody Account account) {
       return accountRepository.save(account);
     }
 
-    // Get a Single Note
+    // Get an Account
     @GetMapping("/accounts/{id}")
     public Account getAccountById(@PathVariable(value="id") Long accountId) {
       return accountRepository.findById(accountId)
           .orElseThrow(() -> new ResourceNotFoundException("Account", "id", accountId));
     }
 
-    // Update a Note
-    @PutMapping("/accounts/{id}")
-    public Account updateAccount(@PathVariable(value="id") Long accountId,
+    // Deposit to an Account
+    @PutMapping("/accounts/deposit/{id}")
+    public Account deposit(@PathVariable(value="id") Long accountId,
         @Valid @RequestBody Account accountDetails) {
       Account account = accountRepository.findById(accountId)
           .orElseThrow(() -> new ResourceNotFoundException("Account", "id", accountId));
-      account.setBalance(accountDetails.getBalance());
+      account.setBalance(accountDetails.getBalance() + account.getBalance());
 
       Account updateAccount = accountRepository.save(account);
       return updateAccount;
     }
 
-    // Delete a Note
+    // Withdraw to an Account
+    @PutMapping("/accounts/withdraw/{id}")
+    public Account withdraw(@PathVariable(value="id") Long accountId,
+        @Valid @RequestBody Account accountDetails) {
+      Account account = accountRepository.findById(accountId)
+          .orElseThrow(() -> new ResourceNotFoundException("Account", "id", accountId));
+      account.setBalance(account.getBalance() - accountDetails.getBalance());
+
+      Account updateAccount = accountRepository.save(account);
+      return updateAccount;
+    }
+
+    // Delete an Account
     @DeleteMapping("/accounts/{id}")
     public ResponseEntity<?> deleteAccount(@PathVariable(value="id") Long accountId) {
       Account account = accountRepository.findById(accountId)

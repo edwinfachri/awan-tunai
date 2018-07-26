@@ -4,25 +4,25 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
-import java.io.Serializable;
 
 @Entity
 @Table(name = "accounts")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"},allowGetters = true)
-public class Account implements Serializable {
+public class Account{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
+    // @NotBlank
     private String acc_number;
 
-    @NotBlank
-    private int balance;
+    // @NotBlank
+    private Integer balance;
 
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -42,11 +42,27 @@ public class Account implements Serializable {
       this.acc_number = acc_number;
     }
 
-    public int getBalance() {
+    public Integer getBalance() {
       return balance;
     }
 
-    public void setBalance(int balance) {
+    public void setBalance(Integer balance) {
       this.balance = balance;
+    }
+
+    public Date getCreatedAt() {
+      return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+      this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+      return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+      this.updatedAt = updatedAt;
     }
 }
