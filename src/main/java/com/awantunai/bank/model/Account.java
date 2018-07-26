@@ -22,6 +22,8 @@ public class Account{
 
     // private User user;
 
+    // private Set<Transaction> transactions;
+
     @NotNull(message = "Account Number can not be null")
     private String accNumber;
 
@@ -50,6 +52,15 @@ public class Account{
 
     // public void setUser(User user) {
     //   this.user = user;
+    // }
+
+    // @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL)
+    // public Set<Transaction> getTransactions() {
+    //   return transaction;
+    // }
+    //
+    // public void setTransactions(Set<Transaction> transactions) {
+    //   this.transactions = transactions;
     // }
 
     public String getAccNumber() {
