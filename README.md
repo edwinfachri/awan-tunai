@@ -1,5 +1,4 @@
 # AWAN TUNAI JOB APPLICATION TEST
-# AWAN TUNAI JOB APPLICATION TEST
 
 ## Contributors
 The contributor(s) are:
