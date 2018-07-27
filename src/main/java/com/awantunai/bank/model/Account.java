@@ -9,8 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 // import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.util.Date;
 
 @Entity
@@ -27,12 +26,15 @@ public class Account{
     // private Set<Transaction> transactions;
 
     @NotNull(message = "Account Number can not be null")
+    @Size(min = 10, max = 10)
     private String accNumber;
 
     @NotNull(message = "AccPin can not be null")
+    @Size(min = 6, max = 6)
     private String accPin;
 
     @NotNull(message = "Initial Balance can not be null")
+    @Min(0)
     private Integer balance;
 
     private String sessionId;

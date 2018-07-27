@@ -9,8 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 // import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.util.Date;
 
 @Entity
@@ -22,10 +21,12 @@ public class Admin{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "Account Number can not be null")
+    @NotNull(message = "Username can not be null")
+    @Size(min = 6, max = 50)
     private String username;
 
-    @NotNull(message = "AccPin can not be null")
+    @NotNull(message = "Password can not be null")
+    @Size(min = 6, max = 25)
     private String password;
 
     @NotNull(message = "Employee ID can not be null")
@@ -33,7 +34,7 @@ public class Admin{
 
     private String sessionId;
 
-    @NotNull(message = "Employee ID can not be null")
+    @NotNull(message = "Status can not be null")
     private Integer status;
 
     @Column(nullable = false, updatable = false)

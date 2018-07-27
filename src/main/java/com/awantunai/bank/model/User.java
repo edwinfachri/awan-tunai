@@ -6,7 +6,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.*;
 import java.util.Date;
 import java.util.Set;
 
@@ -22,9 +22,11 @@ public class User{
     // private Set<Account> accounts;
 
     @NotBlank
+    @Size(min = 3, max = 100)
     private String firstName;
 
     @NotBlank
+    @Size(min = 3, max = 100)
     private String lastName;
 
     @Column(nullable = false)
@@ -32,9 +34,11 @@ public class User{
     private Date birthDate;
 
     @NotBlank
+    @Size(max = 15)
     private String phone;
 
     @NotBlank
+    @Size(min = 5, max = 100)
     private String address;
 
     @Column(nullable = false, updatable = false)

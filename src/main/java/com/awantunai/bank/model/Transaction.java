@@ -6,8 +6,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.*;
 import java.util.Date;
 import java.util.Set;
 
@@ -21,17 +20,26 @@ public class Transaction{
     private Long id;
 
     // private Account account;
-
+    @NotNull(message = "accNumber can not be null")
+    @Size(min = 10, max = 10)
     private String accNumber;
 
+    @NotNull(message = "type can not be null")
+    @Min(0)
+    @Max(10)
     private Integer type;
 
+    @NotNull(message = "amount can not be null")
+    @Min(0)
     private Integer amount;
 
+    @Size(max = 50)
     private String destination;
 
+    @Size(min = 100)
     private String note;
 
+    @NotNull(message = "status can not be null")
     private Boolean status;
 
     @Column(nullable = false, updatable = false)

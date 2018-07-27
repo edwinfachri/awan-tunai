@@ -21,7 +21,7 @@ public class TransactionController {
     TransactionRepository transactionRepository;
 
     @Autowired
-    Account account;
+    AccountRepository accountRepository;
 
     @Autowired
     AdminController adminController = new AdminController();
@@ -61,7 +61,7 @@ public class TransactionController {
 
     // Create a Transfer Transaction
     @PostMapping("/transactions/transfer")
-    public Transaction transfer(@Valid @RequestBody Transaction transaction) {
+    public ResponseEntity<?> transfer(@RequestParam("sessionId") String sessionId, @Valid @RequestBody Transaction transaction) {
       // Check if Admin is logged in
       if (!adminController.findAdminBySessionId(sessionId)) {
         return ResponseEntity.badRequest().body("Please login first.");
