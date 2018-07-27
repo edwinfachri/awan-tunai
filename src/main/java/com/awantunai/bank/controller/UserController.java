@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/awantunai")
@@ -22,65 +23,64 @@ public class UserController {
 
     // Get All Users
     @GetMapping("/users")
-    public List<User> getAllUser() {
-      return userRepository.findAll();
+    public ResponseEntity<?> getAllUser(@RequestParam("sessionId") String sessionId) {
+      // Check if Admin is logged in
+      if (!adminController.findAdminBySessionId(sessionId)) {
+        return ResponseEntity.badRequest().body("Please login first.");
+      }
+      return ResponseEntity.ok().body(userRepository.findAll());
     }
 
     // Create a User
     @PostMapping("/users")
-    public String createUser(@RequestParam("sessionId") String sessionId, @Valid @RequestBody User user) {
+    public ResponseEntity<?> createUser(@RequestParam("sessionId") String sessionId, @Valid @RequestBody User user) {
       // Check if Admin is logged in
-      if (adminController.findAdminBySessionId(sessionId)) {
-        userRepository.save(user);
-        return "User created.";
-      } else {
-        return "Please login first.";
+      if (!adminController.findAdminBySessionId(sessionId)) {
+        return ResponseEntity.badRequest().body("Please login first.");
       }
+      return ResponseEntity.ok().body(userRepository.save(user));
     }
 
     // Get a User
     @GetMapping("/users/{id}")
-    public User getUserById(@RequestParam("sessionId") String sessionId, @PathVariable(value="id") Long userId) {
+    public ResponseEntity<?> getUserById(@RequestParam("sessionId") String sessionId, @PathVariable(value="id") Long userId) {
       // Check if Admin is logged in
-      if (adminController.findAdminBySessionId(sessionId)) {
-        return userRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-      } else {
-        return "Please login first.";
+      if (!adminController.findAdminBySessionId(sessionId)) {
+        return ResponseEntity.badRequest().body("Please login first.");
       }
+      return ResponseEntity.ok().body(userRepository.findById(userId)
+          .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId)));
     }
 
     // Modify User
-    @PutMapping("/users/deposit/{id}")
-    public User editUser(@RequestParam("sessionId") String sessionId, @PathVariable(value="id") Long userId,
+    @PutMapping("/users/{id}")
+    public ResponseEntity<?> editUser(@RequestParam("sessionId") String sessionId, @PathVariable(value="id") Long userId,
         @Valid @RequestBody User userDetails) {
       // Check if Admin is logged in
-      if (adminController.findAdminBySessionId(sessionId)) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-        user.setFirstName(userDetails.getFirstName());
-        user.setLastName(userDetails.getLastName());
-        user.setPhone(userDetails.getPhone());
-        user.setAddress(userDetails.getAddress());
-        user.setBirthDate(userDetails.getBirthDate());
-        User updateUser = userRepository.save(user);
-        return updateUser;
-      } else {
-        return "Please login first.";
+      if (!adminController.findAdminBySessionId(sessionId)) {
+        return ResponseEntity.badRequest().body("Please login first.");
       }
+      User user = userRepository.findById(userId)
+          .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+      user.setFirstName(userDetails.getFirstName());
+      user.setLastName(userDetails.getLastName());
+      user.setPhone(userDetails.getPhone());
+      user.setAddress(userDetails.getAddress());
+      user.setBirthDate(userDetails.getBirthDate());
+      User updateUser = userRepository.save(user);
+      return ResponseEntity.ok().body(updateUser);
     }
 
     // Delete a User
     @DeleteMapping("/users/{id}")
     public ResponseEntity<?> deleteUser(@RequestParam("sessionId") String sessionId, @PathVariable(value="id") Long userId) {
       // Check if Admin is logged in
-      if (adminController.findAdminBySessionId(sessionId)) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-        userRepository.delete(user);
-        return ResponseEntity.ok().build();
-      } else {
-        return "Please login first.";
+      if (!adminController.findAdminBySessionId(sessionId)) {
+        return ResponseEntity.badRequest().body("Please login first.");
       }
+      User user = userRepository.findById(userId)
+        .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+      userRepository.delete(user);
+      return ResponseEntity.ok().build();
     }
 }

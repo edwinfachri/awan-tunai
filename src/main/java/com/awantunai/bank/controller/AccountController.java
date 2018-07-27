@@ -3,6 +3,7 @@ package com.awantunai.bank.controller;
 import com.awantunai.bank.helper.ResourceNotFoundException;
 import com.awantunai.bank.model.Account;
 import com.awantunai.bank.repository.AccountRepository;
+import com.awantunai.bank.controller.AdminController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +19,9 @@ public class AccountController {
 
     @Autowired
     AccountRepository accountRepository;
+
+    @Autowired
+    AdminController adminController = new AdminController();
 
     // Login to Accounts
     @PostMapping("/login")
