@@ -28,7 +28,13 @@ public class UserController {
       if (!adminController.findAdminBySessionId(sessionId)) {
         return ResponseEntity.badRequest().body("Please login first.");
       }
-      return ResponseEntity.ok().body(userRepository.findAll());
+
+      try {
+        return ResponseEntity.ok().body(userRepository.findAll());
+      } catch (Exception e) {
+        return ResponseEntity.badRequest().body("Transaction failed.");
+      }
+
     }
 
     // Create a User
@@ -38,7 +44,13 @@ public class UserController {
       if (!adminController.findAdminBySessionId(sessionId)) {
         return ResponseEntity.badRequest().body("Please login first.");
       }
-      return ResponseEntity.ok().body(userRepository.save(user));
+
+      try {
+        return ResponseEntity.ok().body(userRepository.save(user));
+      } catch (Exception e) {
+        return ResponseEntity.badRequest().body("Transaction failed.");
+      }
+
     }
 
     // Get a User
@@ -48,8 +60,13 @@ public class UserController {
       if (!adminController.findAdminBySessionId(sessionId)) {
         return ResponseEntity.badRequest().body("Please login first.");
       }
-      return ResponseEntity.ok().body(userRepository.findById(userId)
-          .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId)));
+      try {
+        return ResponseEntity.ok().body(userRepository.findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId)));
+      } catch (Exception e) {
+        return ResponseEntity.badRequest().body("Transaction failed.");
+      }
+
     }
 
     // Modify User
@@ -60,15 +77,20 @@ public class UserController {
       if (!adminController.findAdminBySessionId(sessionId)) {
         return ResponseEntity.badRequest().body("Please login first.");
       }
-      User user = userRepository.findById(userId)
-          .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-      user.setFirstName(userDetails.getFirstName());
-      user.setLastName(userDetails.getLastName());
-      user.setPhone(userDetails.getPhone());
-      user.setAddress(userDetails.getAddress());
-      user.setBirthDate(userDetails.getBirthDate());
-      User updateUser = userRepository.save(user);
-      return ResponseEntity.ok().body(updateUser);
+      try {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+        user.setFirstName(userDetails.getFirstName());
+        user.setLastName(userDetails.getLastName());
+        user.setPhone(userDetails.getPhone());
+        user.setAddress(userDetails.getAddress());
+        user.setBirthDate(userDetails.getBirthDate());
+        User updateUser = userRepository.save(user);
+        return ResponseEntity.ok().body(updateUser);
+      } catch (Exception e) {
+        return ResponseEntity.badRequest().body("Transaction failed.");
+      }
+
     }
 
     // Delete a User
@@ -78,9 +100,13 @@ public class UserController {
       if (!adminController.findAdminBySessionId(sessionId)) {
         return ResponseEntity.badRequest().body("Please login first.");
       }
-      User user = userRepository.findById(userId)
-        .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-      userRepository.delete(user);
-      return ResponseEntity.ok().build();
+      try {
+        User user = userRepository.findById(userId)
+          .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+        userRepository.delete(user);
+        return ResponseEntity.ok().body("User deleted.");
+      } catch (Exception e) {
+        return ResponseEntity.badRequest().body("Transaction failed.");
+      }
     }
 }

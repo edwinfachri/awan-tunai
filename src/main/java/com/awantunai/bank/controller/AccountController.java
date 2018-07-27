@@ -23,82 +23,129 @@ public class AccountController {
     @Autowired
     AdminController adminController = new AdminController();
 
-    // Login to Accounts
-    @PostMapping("/login")
-    public String login(@RequestBody Account accountDetails) {
-      Account account = accountRepository.findByAccNumber(accountDetails.getAccNumber());
-      if (account.getAccPin().equals(accountDetails.getAccPin())) {
-        // Generate random UID as a session ID
-        String uid = UUID.randomUUID().toString();
-        account.setSessionId(uid);
-        accountRepository.save(account);
-        return uid;
-      } else {
-        return "Login Failed";
-      }
-    }
-
-    // Login to Accounts
-    @PostMapping("/logout")
-    public String logout(@RequestBody Account accountDetails) {
-      Account account = accountRepository.findByAccNumber(accountDetails.getAccNumber());
-      // Remove value of random UID on session ID in database
-      account.setSessionId(null);
-      accountRepository.save(account);
-      return "Logged Out";
-    }
+    // // Login to Accounts
+    // @PostMapping("/login")
+    // public String login(@RequestBody Account accountDetails) {
+    //   Account account = accountRepository.findByAccNumber(accountDetails.getAccNumber());
+    //   if (account.getAccPin().equals(accountDetails.getAccPin())) {
+    //     // Generate random UID as a session ID
+    //     String uid = UUID.randomUUID().toString();
+    //     account.setSessionId(uid);
+    //     accountRepository.save(account);
+    //     return uid;
+    //   } else {
+    //     return "Login Failed";
+    //   }
+    // }
+    //
+    // // Login to Accounts
+    // @PostMapping("/logout")
+    // public String logout(@RequestBody Account accountDetails) {
+    //   Account account = accountRepository.findByAccNumber(accountDetails.getAccNumber());
+    //   // Remove value of random UID on session ID in database
+    //   account.setSessionId(null);
+    //   accountRepository.save(account);
+    //   return "Logged Out";
+    // }
 
     // Get All Accounts
     @GetMapping("/accounts")
-    public List<Account> getAllAccount() {
-      return accountRepository.findAll();
+    public ResponseEntity<?> getAllAccount(@RequestParam("sessionId") String sessionId) {
+      // Check if Admin is logged in
+      if (!adminController.findAdminBySessionId(sessionId)) {
+        return ResponseEntity.badRequest().body("Please login first.");
+      }
+      try {
+        return ResponseEntity.ok().body(accountRepository.findAll());
+      } catch (Exception e) {
+        return ResponseEntity.badRequest().body("Transaction failed.");
+      }
     }
 
     // Create an Account
     @PostMapping("/accounts")
-    public Account createAccount(@Valid @RequestBody Account account) {
-      return accountRepository.save(account);
+    public ResponseEntity<?> createAccount(@RequestParam("sessionId") String sessionId, @Valid @RequestBody Account account) {
+      // Check if Admin is logged in
+      if (!adminController.findAdminBySessionId(sessionId)) {
+        return ResponseEntity.badRequest().body("Please login first.");
+      }
+      try {
+        return ResponseEntity.ok().body(accountRepository.save(account));
+      } catch (Exception e) {
+        return ResponseEntity.badRequest().body("Transaction failed.");
+      }
     }
 
     // Get an Account
     @GetMapping("/accounts/{id}")
-    public Account getAccountById(@PathVariable(value="id") Long accountId) {
-      return accountRepository.findById(accountId)
-          .orElseThrow(() -> new ResourceNotFoundException("Account", "id", accountId));
+    public ResponseEntity<?> getAccountById(@RequestParam("sessionId") String sessionId, @PathVariable(value="id") Long accountId) {
+      // Check if Admin is logged in
+      if (!adminController.findAdminBySessionId(sessionId)) {
+        return ResponseEntity.badRequest().body("Please login first.");
+      }
+
+      try {
+        return ResponseEntity.ok().body(accountRepository.findById(accountId)
+            .orElseThrow(() -> new ResourceNotFoundException("Account", "id", accountId)));
+      } catch (Exception e) {
+        return ResponseEntity.badRequest().body("Transaction failed.");
+      }
     }
 
     // Deposit to an Account
-    @PutMapping("/accounts/deposit/{id}")
-    public Account deposit(@PathVariable(value="id") Long accountId,
-        @RequestBody Account accountDetails) {
-      Account account = accountRepository.findById(accountId)
-          .orElseThrow(() -> new ResourceNotFoundException("Account", "id", accountId));
-      account.setBalance(accountDetails.getBalance() + account.getBalance());
+    @PutMapping("/accounts/deposit")
+    public ResponseEntity<?> deposit(@RequestParam("sessionId") String sessionId, @RequestBody Account accountDetails) {
+      // Check if Admin is logged in
+      if (!adminController.findAdminBySessionId(sessionId)) {
+        return ResponseEntity.badRequest().body("Please login first.");
+      }
 
-      Account updateAccount = accountRepository.save(account);
-      return updateAccount;
+      // Try to find by account number
+      try {
+        Account account = accountRepository.findByAccNumber(accountDetails.getAccNumber());
+        account.setBalance(accountDetails.getBalance() + account.getBalance());
+        Account updateAccount = accountRepository.save(account);
+        return ResponseEntity.ok().body(updateAccount);
+      } catch (Exception e) {
+        return ResponseEntity.badRequest().body("Account not found");
+      }
     }
 
     // Withdraw to an Account
-    @PutMapping("/accounts/withdraw/{id}")
-    public Account withdraw(@PathVariable(value="id") Long accountId,
-        @RequestBody Account accountDetails) {
-      Account account = accountRepository.findById(accountId)
-          .orElseThrow(() -> new ResourceNotFoundException("Account", "id", accountId));
-      account.setBalance(account.getBalance() - accountDetails.getBalance());
+    @PutMapping("/accounts/withdraw")
+    public ResponseEntity<?> withdraw(@RequestParam("sessionId") String sessionId, @RequestBody Account accountDetails) {
+      // Check if Admin is logged in
+      if (!adminController.findAdminBySessionId(sessionId)) {
+        return ResponseEntity.badRequest().body("Please login first.");
+      }
 
-      Account updateAccount = accountRepository.save(account);
-      return updateAccount;
+      // Try to find by account number
+      try {
+        Account account = accountRepository.findByAccNumber(accountDetails.getAccNumber());
+        account.setBalance(accountDetails.getBalance() - account.getBalance());
+        Account updateAccount = accountRepository.save(account);
+        return ResponseEntity.ok().body(updateAccount);
+      } catch (Exception e) {
+        return ResponseEntity.badRequest().body("Account not found");
+      }
     }
 
     // Delete an Account
     @DeleteMapping("/accounts/{id}")
-    public ResponseEntity<?> deleteAccount(@PathVariable(value="id") Long accountId) {
-      Account account = accountRepository.findById(accountId)
-          .orElseThrow(() -> new ResourceNotFoundException("Account", "id", accountId));
+    public ResponseEntity<?> deleteAccount(@RequestParam("sessionId") String sessionId, @PathVariable(value="id") Long accountId) {
+      // Check if Admin is logged in
+      if (!adminController.findAdminBySessionId(sessionId)) {
+        return ResponseEntity.badRequest().body("Please login first.");
+      }
 
-      accountRepository.delete(account);
+      try {
+        Account account = accountRepository.findById(accountId)
+            .orElseThrow(() -> new ResourceNotFoundException("Account", "id", accountId));
+        accountRepository.delete(account);
+        return ResponseEntity.ok().body("Account deleted.");
+      } catch (Exception e) {
+        return ResponseEntity.badRequest().body("Transaction failed.");
+      }
 
-      return ResponseEntity.ok().build();
     }
 }
