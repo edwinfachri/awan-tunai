@@ -3,6 +3,7 @@ package com.awantunai.bank.controller;
 import com.awantunai.bank.helper.ResourceNotFoundException;
 import com.awantunai.bank.model.User;
 import com.awantunai.bank.repository.UserRepository;
+import com.awantunai.bank.controller.AdminController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,9 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    AdminController adminController = new AdminController();
+
     // Get All Users
     @GetMapping("/users")
     public List<User> getAllUser() {
@@ -24,8 +28,15 @@ public class UserController {
 
     // Create a User
     @PostMapping("/users")
-    public User createUser(@Valid @RequestBody User user) {
-      return userRepository.save(user);
+    public String createUser(@RequestParam("sessionId") String sessionId, @Valid @RequestBody User user) {
+      // Check if Admin is logged in
+      if (adminController.findAdminBySessionId(sessionId)) {
+        userRepository.save(user);
+        return "User created.";
+      } else {
+        return "Please login first.";
+      }
+
     }
 
     // Get a User

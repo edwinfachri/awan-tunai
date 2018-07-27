@@ -27,7 +27,7 @@ public class User{
     @NotBlank
     private String lastName;
 
-    @NotBlank
+    @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date birthDate;
 

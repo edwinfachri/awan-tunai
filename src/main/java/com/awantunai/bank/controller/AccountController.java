@@ -6,6 +6,8 @@ import com.awantunai.bank.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+// import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+// import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
@@ -20,11 +22,9 @@ public class AccountController {
     // Login to Accounts
     @PostMapping("/login")
     public String login(@RequestBody Account accountDetails) {
-      System.out.println("accountDetails.getAccNumber() : "+accountDetails.getAccNumber());
       Account account = accountRepository.findByAccNumber(accountDetails.getAccNumber());
-      System.out.println("account pin: "+account.getAccPin());
-      System.out.println("accountDetails pin: "+accountDetails.getAccPin());
       if (account.getAccPin().equals(accountDetails.getAccPin())) {
+        // Generate random UID as a session ID
         String uid = UUID.randomUUID().toString();
         account.setSessionId(uid);
         accountRepository.save(account);
@@ -32,6 +32,16 @@ public class AccountController {
       } else {
         return "Login Failed";
       }
+    }
+
+    // Login to Accounts
+    @PostMapping("/logout")
+    public String logout(@RequestBody Account accountDetails) {
+      Account account = accountRepository.findByAccNumber(accountDetails.getAccNumber());
+      // Remove value of random UID on session ID in database
+      account.setSessionId(null);
+      accountRepository.save(account);
+      return "Logged Out";
     }
 
     // Get All Accounts
