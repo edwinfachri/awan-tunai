@@ -146,6 +146,5 @@ public class AccountController {
       } catch (Exception e) {
         return ResponseEntity.badRequest().body("Transaction failed.");
       }
-
     }
 }

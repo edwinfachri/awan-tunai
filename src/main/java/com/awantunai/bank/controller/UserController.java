@@ -66,7 +66,6 @@ public class UserController {
       } catch (Exception e) {
         return ResponseEntity.badRequest().body("Transaction failed.");
       }
-
     }
 
     // Modify User
