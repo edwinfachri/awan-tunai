@@ -36,40 +36,51 @@ public class UserController {
       } else {
         return "Please login first.";
       }
-
     }
 
     // Get a User
     @GetMapping("/users/{id}")
-    public User getUserById(@PathVariable(value="id") Long userId) {
-      return userRepository.findById(userId)
-          .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+    public User getUserById(@RequestParam("sessionId") String sessionId, @PathVariable(value="id") Long userId) {
+      // Check if Admin is logged in
+      if (adminController.findAdminBySessionId(sessionId)) {
+        return userRepository.findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+      } else {
+        return "Please login first.";
+      }
     }
 
     // Modify User
     @PutMapping("/users/deposit/{id}")
-    public User editUser(@PathVariable(value="id") Long userId,
+    public User editUser(@RequestParam("sessionId") String sessionId, @PathVariable(value="id") Long userId,
         @Valid @RequestBody User userDetails) {
-      User user = userRepository.findById(userId)
-          .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-      user.setFirstName(userDetails.getFirstName());
-      user.setLastName(userDetails.getLastName());
-      user.setPhone(userDetails.getPhone());
-      user.setAddress(userDetails.getAddress());
-      user.setBirthDate(userDetails.getBirthDate());
-      User updateUser = userRepository.save(user);
-      return updateUser;
+      // Check if Admin is logged in
+      if (adminController.findAdminBySessionId(sessionId)) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+        user.setFirstName(userDetails.getFirstName());
+        user.setLastName(userDetails.getLastName());
+        user.setPhone(userDetails.getPhone());
+        user.setAddress(userDetails.getAddress());
+        user.setBirthDate(userDetails.getBirthDate());
+        User updateUser = userRepository.save(user);
+        return updateUser;
+      } else {
+        return "Please login first.";
+      }
     }
-
 
     // Delete a User
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<?> deleteUser(@PathVariable(value="id") Long userId) {
-      User user = userRepository.findById(userId)
-          .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
-
-      userRepository.delete(user);
-
-      return ResponseEntity.ok().build();
+    public ResponseEntity<?> deleteUser(@RequestParam("sessionId") String sessionId, @PathVariable(value="id") Long userId) {
+      // Check if Admin is logged in
+      if (adminController.findAdminBySessionId(sessionId)) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+        userRepository.delete(user);
+        return ResponseEntity.ok().build();
+      } else {
+        return "Please login first.";
+      }
     }
 }
