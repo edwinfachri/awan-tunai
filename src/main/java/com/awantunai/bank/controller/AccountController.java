@@ -1,6 +1,6 @@
 package com.awantunai.bank.controller;
 
-import com.awantunai.bank.exception.ResourceNotFoundException;
+import com.awantunai.bank.helper.ResourceNotFoundException;
 import com.awantunai.bank.model.Account;
 import com.awantunai.bank.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/awantunai")
@@ -18,8 +19,19 @@ public class AccountController {
 
     // Login to Accounts
     @PostMapping("/login")
-    public String login(@RequestBody Account account) {
-
+    public String login(@RequestBody Account accountDetails) {
+      System.out.println("accountDetails.getAccNumber() : "+accountDetails.getAccNumber());
+      Account account = accountRepository.findByAccNumber(accountDetails.getAccNumber());
+      System.out.println("account pin: "+account.getAccPin());
+      System.out.println("accountDetails pin: "+accountDetails.getAccPin());
+      if (account.getAccPin().equals(accountDetails.getAccPin())) {
+        String uid = UUID.randomUUID().toString();
+        account.setSessionId(uid);
+        accountRepository.save(account);
+        return uid;
+      } else {
+        return "Login Failed";
+      }
     }
 
     // Get All Accounts

@@ -1,4 +1,4 @@
-package com.awantunai.bank.exception;
+package com.awantunai.bank.helper;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

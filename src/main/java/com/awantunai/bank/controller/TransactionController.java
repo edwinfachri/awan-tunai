@@ -1,6 +1,6 @@
 package com.awantunai.bank.controller;
 
-import com.awantunai.bank.exception.ResourceNotFoundException;
+import com.awantunai.bank.helper.ResourceNotFoundException;
 import com.awantunai.bank.model.Transaction;
 import com.awantunai.bank.model.Account;
 import com.awantunai.bank.repository.TransactionRepository;

@@ -1,6 +1,6 @@
 package com.awantunai.bank.controller;
 
-import com.awantunai.bank.exception.ResourceNotFoundException;
+import com.awantunai.bank.helper.ResourceNotFoundException;
 import com.awantunai.bank.model.User;
 import com.awantunai.bank.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

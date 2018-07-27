@@ -27,11 +27,13 @@ public class Account{
     @NotNull(message = "Account Number can not be null")
     private String accNumber;
 
-    @NotNull(message = "Pin can not be null")
+    @NotNull(message = "AccPin can not be null")
     private String accPin;
 
     @NotNull(message = "Initial Balance can not be null")
     private Integer balance;
+
+    private String sessionId;
 
     @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
@@ -77,6 +79,14 @@ public class Account{
 
     public void setAccPin(String accPin) {
       this.accPin = accPin;
+    }
+
+    public String getSessionId() {
+      return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+      this.sessionId = sessionId;
     }
 
     public Integer getBalance() {
