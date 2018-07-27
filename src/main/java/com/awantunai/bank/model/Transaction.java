@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Set;
 
@@ -21,17 +22,16 @@ public class Transaction{
 
     // private Account account;
 
-    @NotBlank
+    private String accNumber;
+
     private Integer type;
 
-    @NotBlank
     private Integer amount;
 
     private String destination;
 
     private String note;
 
-    @NotBlank
     private Boolean status;
 
     @Column(nullable = false, updatable = false)
@@ -45,7 +45,7 @@ public class Transaction{
     private Date updatedAt;
 
     // @ManyToOne
-    // @JoinColumn(name = "account_id")
+    // @JoinColumn(name = "account_number")
     // public Account getAccount() {
     //   return account;
     // }
@@ -53,6 +53,14 @@ public class Transaction{
     // public void setAccount(Account account) {
     //   this.account = account;
     // }
+
+    public String getAccNumber() {
+      return accNumber;
+    }
+
+    public void setAccNumber(String accNumber) {
+      this.accNumber = accNumber;
+    }
 
     public Integer getType() {
       return type;

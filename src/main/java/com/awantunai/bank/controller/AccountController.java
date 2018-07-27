@@ -16,6 +16,12 @@ public class AccountController {
     @Autowired
     AccountRepository accountRepository;
 
+    // Login to Accounts
+    @PostMapping("/login")
+    public String login(@RequestBody Account account) {
+
+    }
+
     // Get All Accounts
     @GetMapping("/accounts")
     public List<Account> getAllAccount() {
@@ -38,7 +44,7 @@ public class AccountController {
     // Deposit to an Account
     @PutMapping("/accounts/deposit/{id}")
     public Account deposit(@PathVariable(value="id") Long accountId,
-        @Valid @RequestBody Account accountDetails) {
+        @RequestBody Account accountDetails) {
       Account account = accountRepository.findById(accountId)
           .orElseThrow(() -> new ResourceNotFoundException("Account", "id", accountId));
       account.setBalance(accountDetails.getBalance() + account.getBalance());
@@ -50,7 +56,7 @@ public class AccountController {
     // Withdraw to an Account
     @PutMapping("/accounts/withdraw/{id}")
     public Account withdraw(@PathVariable(value="id") Long accountId,
-        @Valid @RequestBody Account accountDetails) {
+        @RequestBody Account accountDetails) {
       Account account = accountRepository.findById(accountId)
           .orElseThrow(() -> new ResourceNotFoundException("Account", "id", accountId));
       account.setBalance(account.getBalance() - accountDetails.getBalance());
