@@ -8,7 +8,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 // import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 // import org.springframework.security.crypto.password.PasswordEncoder;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -28,6 +28,10 @@ public class Account{
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @JsonManagedReference
+    @OneToMany(mappedBy="account", fetch = FetchType.LAZY)
+    private List<Transaction> transactions;
 
     @Column(unique = true)
     @NotNull(message = "Account Number can not be null")
@@ -54,25 +58,6 @@ public class Account{
     @LastModifiedDate
     private Date updatedAt;
 
-    public User getUser() {
-      return user;
-    }
-
-    public void setUser(User user) {
-      this.user = user;
-    }
-
-    // @OneToMany(mappedBy="transaction")
-    // private List<Transaction> transactions;
-    //
-    // public List<Transaction> getTransactions() {
-    //   return transactions;
-    // }
-
-    // public void setTransactions(List<Transaction> transactions) {
-    //   this.transactions = transactions;
-    // }
-
     private Account() { } // JPA only
 
     public Account(final User user,
@@ -93,6 +78,22 @@ public class Account{
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public User getUser() {
+      return user;
+    }
+
+    public void setUser(User user) {
+      this.user = user;
+    }
+
+    public List<Transaction> getTransactions() {
+      return transactions;
+    }
+
+    public void setTransactions(List<Transaction> transactions) {
+      this.transactions = transactions;
     }
 
     public String getAccNumber() {

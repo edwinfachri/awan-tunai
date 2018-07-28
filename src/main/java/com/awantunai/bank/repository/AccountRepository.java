@@ -11,6 +11,6 @@ import java.util.Optional;
 
 @Repository
 public interface AccountRepository extends JpaRepository<Account, Long> {
-  Account findByAccNumber(String accnNumber);
+  Account findByAccNumber(String accNumber);
   Collection<User> findByUserId(Long userId);
 }

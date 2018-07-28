@@ -2,7 +2,11 @@ package com.awantunai.bank.controller;
 
 import com.awantunai.bank.helper.ResourceNotFoundException;
 import com.awantunai.bank.model.Account;
+import com.awantunai.bank.model.User;
+import com.awantunai.bank.model.Transaction;
 import com.awantunai.bank.repository.AccountRepository;
+import com.awantunai.bank.repository.UserRepository;
+import com.awantunai.bank.repository.TransactionRepository;
 import com.awantunai.bank.controller.AdminController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +23,12 @@ public class AccountController {
 
     @Autowired
     AccountRepository accountRepository;
+
+    @Autowired
+    UserRepository userRepository;
+
+    @Autowired
+    TransactionRepository transactionRepository;
 
     @Autowired
     AdminController adminController = new AdminController();
@@ -63,14 +73,16 @@ public class AccountController {
     }
 
     // Create an Account
-    @PostMapping("/accounts")
-    public ResponseEntity<?> createAccount(@RequestParam("sessionId") String sessionId, @Valid @RequestBody Account account) {
+    @PostMapping("/users/{id}/accounts")
+    public ResponseEntity<?> createAccount(@PathVariable(value="id") Long userId, @RequestParam("sessionId") String sessionId, @Valid @RequestBody Account account) {
       // Check if Admin is logged in
       if (!adminController.findAdminBySessionId(sessionId)) {
         return ResponseEntity.badRequest().body("Please login first.");
       }
       try {
-        return ResponseEntity.ok().body(accountRepository.save(account));
+        User user = userRepository.findById(userId)
+        .orElseThrow(() -> new ResourceNotFoundException("User", "id", userId));
+        return ResponseEntity.ok().body(accountRepository.save(new Account(user, account.getAccNumber(), account.getAccPin(), account.getBalance())));
       } catch (Exception e) {
         return ResponseEntity.badRequest().body("Transaction failed.");
       }
@@ -93,7 +105,7 @@ public class AccountController {
     }
 
     // Deposit to an Account
-    @PutMapping("/accounts/deposit")
+    @PutMapping("/deposit")
     public ResponseEntity<?> deposit(@RequestParam("sessionId") String sessionId, @RequestBody Account accountDetails) {
       // Check if Admin is logged in
       if (!adminController.findAdminBySessionId(sessionId)) {
@@ -103,7 +115,8 @@ public class AccountController {
       // Try to find by account number
       try {
         Account account = accountRepository.findByAccNumber(accountDetails.getAccNumber());
-        account.setBalance(accountDetails.getBalance() + account.getBalance());
+        account.setBalance(account.getBalance() + accountDetails.getBalance());
+        Transaction transaction = transactionRepository.save(new Transaction(account, 1, accountDetails.getBalance(), true));
         Account updateAccount = accountRepository.save(account);
         return ResponseEntity.ok().body(updateAccount);
       } catch (Exception e) {
@@ -112,7 +125,7 @@ public class AccountController {
     }
 
     // Withdraw to an Account
-    @PutMapping("/accounts/withdraw")
+    @PutMapping("/withdraw")
     public ResponseEntity<?> withdraw(@RequestParam("sessionId") String sessionId, @RequestBody Account accountDetails) {
       // Check if Admin is logged in
       if (!adminController.findAdminBySessionId(sessionId)) {
@@ -122,7 +135,8 @@ public class AccountController {
       // Try to find by account number
       try {
         Account account = accountRepository.findByAccNumber(accountDetails.getAccNumber());
-        account.setBalance(accountDetails.getBalance() - account.getBalance());
+        account.setBalance(account.getBalance() - accountDetails.getBalance());
+        Transaction transaction = transactionRepository.save(new Transaction(account, 2, accountDetails.getBalance(), true));
         Account updateAccount = accountRepository.save(account);
         return ResponseEntity.ok().body(updateAccount);
       } catch (Exception e) {
