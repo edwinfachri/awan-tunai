@@ -46,69 +46,69 @@ The steps to run the Application Server are:
 The format for request to the services are:
   1. Create Admin
     - Data
-    No  | Parameter | Type
-    --- | --- | ---
-    1   | username | String
-    2   | password | String
+    No  | Parameter  | Type
+    --- | ---------- | ---
+    1   | username   | String
+    2   | password   | String
     3   | employeeId | Long
-    4   | status | Boolean
+    4   | status     | Boolean
 
   2. Login
     - Data
     No  | Parameter | Type
-    --- | --- | ---
-    1   | username | String
-    2   | password | String
+    --- | --------- | ---
+    1   | username  | String
+    2   | password  | String
 
   3. Logout
     - Data
     No  | Parameter | Type
-    --- | --- | ---
+    --- | --------- | ---
     1   | sessionId | String
 
   4. Create User
     - Parameter: sessionId
     - Data
     No  | Parameter | Type
-    --- | --- | ---
+    --- | --------- | ---
     1   | firstName | String
-    1   | lastName | String
+    1   | lastName  | String
     1   | birthDate | date
-    1   | phone | String
-    1   | address | String
+    1   | phone     | String
+    1   | address   | String
 
   5. Create Account
     - Parameter: sessionId
     - Data
     No  | Parameter | Type
-    --- | --- | ---
+    --- | --------- | ---
     1   | accNumber | String
-    2   | accPin | String
-    3   | balance | Integer
+    2   | accPin    | String
+    3   | balance   | Integer
 
   6. Deposit
     - Parameter: sessionId
     - Data
     No  | Parameter | Type
-    --- | --- | ---
+    --- | --------- | ---
     1   | accNumber | String
-    2   | balance | Integer
+    2   | balance   | Integer
 
   7. Withdraw
     - Parameter: sessionId
     - Data
     No  | Parameter | Type
-    --- | --- | ---
+    --- | --------- | ---
     1   | accNumber | String
-    2   | balance | Integer
+    2   | balance   | Integer
 
   8. Transfer
     - Parameter: sessionId
     - Data
-    No  | Parameter | Type
-    --- | --- | ---
-    1   | accNumber | String
-    2   | amount | Integer
+    No  | Parameter   | Type
+    --- | ----------- | ---
+    1   | accNumber   | String
+    2   | amount      | Integer
     3   | destination | String
 
   9. View Transactions
@@ -143,9 +143,7 @@ The steps to send requests are:
       -H 'Postman-Token: f6d5c821-46dd-4fec-ace7-40a6f202e80a' \
       -d '{"username" : "edwinn", "password" : "fachrii"}'
     ```
-    You will get a key to make a transaction through this application that will be sent altogether with the curl via parameter. Save It.
-
-    My key is `0258d42a-ca66-432f-8307-4ed78b103cfc`
+    You will get a key to make a transaction through this application that will be sent altogether with the curl via parameter. Save It. My key is `0258d42a-ca66-432f-8307-4ed78b103cfc`
 
     - Logout
     ```
