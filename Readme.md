@@ -135,124 +135,124 @@ The steps to send requests are:
   2. Open Terminal and send the following request using `curl`
     - Create Admin
 
-    ```
+```
     curl -X POST \
       http://localhost:8080/awantunai/admins \
       -H 'Cache-Control: no-cache' \
       -H 'Content-Type: application/json' \
       -H 'Postman-Token: fe9218f9-391b-40f0-b8eb-a922c78f8afc' \
       -d '{"username" : "edwinn", "password" : "fachrii", "employeeId" : "1", "status" : "1"}'
-    ```
+```
 
     - Login
 
-    ```
+```
     curl -X POST \
       http://localhost:8080/awantunai/admins/login \
       -H 'Cache-Control: no-cache' \
       -H 'Content-Type: application/json' \
       -H 'Postman-Token: f6d5c821-46dd-4fec-ace7-40a6f202e80a' \
       -d '{"username" : "edwinn", "password" : "fachrii"}'
-    ```
+```
 
     You will get a key to make a transaction through this application that will be sent altogether with the curl via parameter. Save It. My key is `0258d42a-ca66-432f-8307-4ed78b103cfc`
 
     - Logout
 
-    ```
+```
     curl -X POST \
       http://localhost:8080/awantunai/admins/logout \
       -H 'Cache-Control: no-cache' \
       -H 'Content-Type: application/json' \
       -H 'Postman-Token: cee3390b-0c4d-485c-ac33-5b210b142940' \
       -d '{"sessionId" : "0258d42a-ca66-432f-8307-4ed78b103cfc"}'
-    ```
+```
 
     Change the key to the one you obtained while login.
 
     - Create User
 
-    ```
+```
     curl -X POST \
       'http://localhost:8080/awantunai/users?sessionId=0258d42a-ca66-432f-8307-4ed78b103cfc' \
       -H 'Cache-Control: no-cache' \
       -H 'Content-Type: application/json' \
       -H 'Postman-Token: 5c60815b-ac7b-4399-b8c1-91dc4f956ff2' \
       -d '{"firstName" : "edwin", "lastName" : "fachri", "birthDate" : "19940917", "phone" : "085959336191", "address" : "Taman Anyelir"}'
-    ```
+```
 
     Always replace the `sessionId` parameter with your own key.
 
     - Create Account
 
-    ```
+```
     curl -X POST \
       'http://localhost:8080/awantunai/users/1/accounts?sessionId=0258d42a-ca66-432f-8307-4ed78b103cfc' \
       -H 'Cache-Control: no-cache' \
       -H 'Content-Type: application/json' \
       -H 'Postman-Token: 08abdd21-8f8c-49d7-a43c-68adabe6e954' \
       -d '{"accNumber" : "1234567890", "accPin" : "123456", "balance" : "500000"}'
-    ```
+```
 
     - Deposit
 
-    ```
+```
     curl -X PUT \
       'http://localhost:8080/awantunai/deposit?sessionId=0258d42a-ca66-432f-8307-4ed78b103cfc' \
       -H 'Cache-Control: no-cache' \
       -H 'Content-Type: application/json' \
       -H 'Postman-Token: 86b381c0-f675-4b08-802b-9d96516857a1' \
       -d '{"accNumber":"1234567890", "balance": 500}'
-    ```
+```
 
     - Withdraw
 
-    ```
+```
     curl -X PUT \
       'http://localhost:8080/awantunai/withdraw?sessionId=0258d42a-ca66-432f-8307-4ed78b103cfc' \
       -H 'Cache-Control: no-cache' \
       -H 'Content-Type: application/json' \
       -H 'Postman-Token: 1fd1c5ea-704f-4daa-969d-563648297060' \
       -d '{"accNumber":"1234567890", "balance": 500}'
-    ```
+```
 
     - Transfer
     Create another account by following command
 
-    ```
+```
     curl -X POST \
       'http://localhost:8080/awantunai/users/1/accounts?sessionId=0258d42a-ca66-432f-8307-4ed78b103cfc' \
       -H 'Cache-Control: no-cache' \
       -H 'Content-Type: application/json' \
       -H 'Postman-Token: 6a41d9fa-e8a1-45a6-a302-64de085ba31c' \
       -d '{"accNumber" : "1234567891", "accPin" : "123456", "balance" : "500000"}'
-    ```
+```
 
     and then make the transfer.
 
-    ```
+```
     curl -X POST \
       'http://localhost:8080/awantunai/transfer?sessionId=0258d42a-ca66-432f-8307-4ed78b103cfc' \
       -H 'Cache-Control: no-cache' \
       -H 'Content-Type: application/json' \
       -H 'Postman-Token: 0e39be91-80d1-40f1-b930-a1cd1f9840ae' \
       -d '{"accNumber" : "1234567890", "amount" : "599", "destination" : "1234567891"}'
-    ```
+```
 
     - View Transactions
 
-    ```
+```
     curl -X GET \
       'http://localhost:8080/awantunai/transactions?sessionId=0258d42a-ca66-432f-8307-4ed78b103cfc' \
       -H 'Cache-Control: no-cache' \
       -H 'Postman-Token: 2ada7c4d-aa6f-430d-9c8a-ab7be723187a'
-    ```
+```
 
     - View Transactions from particular account
 
-    ```
+```
     curl -X GET \
       'http://localhost:8080/awantunai/transactions/1?sessionId=0258d42a-ca66-432f-8307-4ed78b103cfc' \
       -H 'Cache-Control: no-cache' \
       -H 'Postman-Token: 49b20271-2626-4a36-a5eb-33726cbe1fb3'
-    ```
+```
