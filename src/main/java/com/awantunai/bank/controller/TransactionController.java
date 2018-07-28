@@ -67,8 +67,7 @@ public class TransactionController {
         return ResponseEntity.badRequest().body("Please login first.");
       }
       try {
-        return ResponseEntity.ok().body(transactionRepository.findById(transactionId)
-            .orElseThrow(() -> new ResourceNotFoundException("Transaction", "id", transactionId)));
+        return ResponseEntity.ok().body(transactionRepository.findByAccountId(transactionId));
       } catch (Exception e) {
         return ResponseEntity.badRequest().body("Transaction failed.");
       }

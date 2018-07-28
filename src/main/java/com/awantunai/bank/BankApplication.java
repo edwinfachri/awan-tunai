@@ -24,17 +24,17 @@ public class BankApplication {
 		SpringApplication.run(BankApplication.class, args);
 	}
 
-	@Bean
-	CommandLineRunner init(AccountRepository accountRepository,
-						   AdminRepository adminRepository, UserRepository userRepository) throws Exception{
-		SimpleDateFormat formatter=new SimpleDateFormat("yyyyMMdd");
-		Date date=formatter.parse("19940917");
-		return args ->
-			Arrays.asList("edwinn", "facrii", "wicaksono")
-				.forEach(id -> {
-					adminRepository.save(new Admin(id, id, Long.valueOf(1), id, 1));
-			    User user = userRepository.save(new User(id, id, date, "123321", "Homeee"));
-			    accountRepository.save(new Account(user, "1233211233", "123321", 5000));
-				});
-	}
+	// @Bean
+	// CommandLineRunner init(AccountRepository accountRepository,
+	// 					   AdminRepository adminRepository, UserRepository userRepository) throws Exception{
+	// 	SimpleDateFormat formatter=new SimpleDateFormat("yyyyMMdd");
+	// 	Date date=formatter.parse("19940917");
+	// 	return args ->
+	// 		Arrays.asList("edwinn", "facrii", "wicaksono")
+	// 			.forEach(id -> {
+	// 				adminRepository.save(new Admin(id, id, Long.valueOf(1), id, 1));
+	// 		    User user = userRepository.save(new User(id, id, date, "123321", "Homeee"));
+	// 		    accountRepository.save(new Account(user, "1233211233", "123321", 5000));
+	// 			});
+	// }
 }
