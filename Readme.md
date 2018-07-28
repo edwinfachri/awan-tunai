@@ -46,70 +46,78 @@ The steps to run the Application Server are:
 The format for request to the services are:
   1. Create Admin
     - Data
-    No  | Parameter  | Type
-    --- | ---------- | ---
-    1   | username   | String
-    2   | password   | String
-    3   | employeeId | Long
-    4   | status     | Boolean
+
+    |No  | Parameter  | Type    |
+    |--- | ---------- | ------- |
+    |1   | username   | String  |
+    |2   | password   | String  |
+    |3   | employeeId | Long    |
+    |4   | status     | Boolean |
 
   2. Login
     - Data
-    No  | Parameter | Type
-    --- | --------- | ---
-    1   | username  | String
-    2   | password  | String
+
+    |No  | Parameter | Type   |
+    |--- | --------- | ------ |
+    |1   | username  | String |
+    |2   | password  | String |
 
   3. Logout
     - Data
-    No  | Parameter | Type
-    --- | --------- | ---
-    1   | sessionId | String
+
+    |No  | Parameter | Type   |
+    |--- | --------- | ------ |
+    |1   | sessionId | String |
 
   4. Create User
     - Parameter: sessionId
     - Data
-    No  | Parameter | Type
-    --- | --------- | ---
-    1   | firstName | String
-    1   | lastName  | String
-    1   | birthDate | date
-    1   | phone     | String
-    1   | address   | String
+
+    |No  | Parameter | Type   |
+    |--- | --------- | ------ |
+    |1   | firstName | String |
+    |2   | lastName  | String |
+    |3   | birthDate | date   |
+    |4   | phone     | String |
+    |5   | address   | String |
 
   5. Create Account
     - Parameter: sessionId
     - Data
-    No  | Parameter | Type
-    --- | --------- | ---
-    1   | accNumber | String
-    2   | accPin    | String
-    3   | balance   | Integer
+
+    |No  | Parameter | Type    |
+    |--- | --------- | ------- |
+    |1   | accNumber | String  |
+    |2   | accPin    | String  |
+    |3   | balance   | Integer |
 
   6. Deposit
     - Parameter: sessionId
     - Data
-    No  | Parameter | Type
-    --- | --------- | ---
-    1   | accNumber | String
-    2   | balance   | Integer
+
+    |No  | Parameter | Type    |
+    |--- | --------- | ------- |
+    |1   | accNumber | String  |
+    |2   | balance   | Integer |
 
   7. Withdraw
     - Parameter: sessionId
     - Data
-    No  | Parameter | Type
-    --- | --------- | ---
-    1   | accNumber | String
-    2   | balance   | Integer
+
+    |No  | Parameter | Type    |
+    |--- | --------- | ------- |
+    |1   | accNumber | String  |
+    |2   | balance   | Integer |
 
   8. Transfer
     - Parameter: sessionId
     - Data
-    No  | Parameter   | Type
-    --- | ----------- | ---
-    1   | accNumber   | String
-    2   | amount      | Integer
-    3   | destination | String
+
+    |No  | Parameter   | Type    |
+    |--- | ----------- | ------- |
+    |1   | accNumber   | String  |
+    |2   | amount      | Integer |
+    |3   | destination | String  |
 
   9. View Transactions
     - Parameter: sessionId
@@ -126,6 +134,7 @@ The steps to send requests are:
   1. Make sure the application server and database server are on
   2. Open Terminal and send the following request using `curl`
     - Create Admin
+
     ```
     curl -X POST \
       http://localhost:8080/awantunai/admins \
@@ -134,7 +143,9 @@ The steps to send requests are:
       -H 'Postman-Token: fe9218f9-391b-40f0-b8eb-a922c78f8afc' \
       -d '{"username" : "edwinn", "password" : "fachrii", "employeeId" : "1", "status" : "1"}'
     ```
+
     - Login
+
     ```
     curl -X POST \
       http://localhost:8080/awantunai/admins/login \
@@ -143,9 +154,11 @@ The steps to send requests are:
       -H 'Postman-Token: f6d5c821-46dd-4fec-ace7-40a6f202e80a' \
       -d '{"username" : "edwinn", "password" : "fachrii"}'
     ```
+
     You will get a key to make a transaction through this application that will be sent altogether with the curl via parameter. Save It. My key is `0258d42a-ca66-432f-8307-4ed78b103cfc`
 
     - Logout
+
     ```
     curl -X POST \
       http://localhost:8080/awantunai/admins/logout \
@@ -154,9 +167,11 @@ The steps to send requests are:
       -H 'Postman-Token: cee3390b-0c4d-485c-ac33-5b210b142940' \
       -d '{"sessionId" : "0258d42a-ca66-432f-8307-4ed78b103cfc"}'
     ```
+
     Change the key to the one you obtained while login.
 
     - Create User
+
     ```
     curl -X POST \
       'http://localhost:8080/awantunai/users?sessionId=0258d42a-ca66-432f-8307-4ed78b103cfc' \
@@ -165,9 +180,11 @@ The steps to send requests are:
       -H 'Postman-Token: 5c60815b-ac7b-4399-b8c1-91dc4f956ff2' \
       -d '{"firstName" : "edwin", "lastName" : "fachri", "birthDate" : "19940917", "phone" : "085959336191", "address" : "Taman Anyelir"}'
     ```
+
     Always replace the `sessionId` parameter with your own key.
 
     - Create Account
+
     ```
     curl -X POST \
       'http://localhost:8080/awantunai/users/1/accounts?sessionId=0258d42a-ca66-432f-8307-4ed78b103cfc' \
@@ -178,6 +195,7 @@ The steps to send requests are:
     ```
 
     - Deposit
+
     ```
     curl -X PUT \
       'http://localhost:8080/awantunai/deposit?sessionId=0258d42a-ca66-432f-8307-4ed78b103cfc' \
@@ -188,6 +206,7 @@ The steps to send requests are:
     ```
 
     - Withdraw
+
     ```
     curl -X PUT \
       'http://localhost:8080/awantunai/withdraw?sessionId=0258d42a-ca66-432f-8307-4ed78b103cfc' \
@@ -199,6 +218,7 @@ The steps to send requests are:
 
     - Transfer
     Create another account by following command
+
     ```
     curl -X POST \
       'http://localhost:8080/awantunai/users/1/accounts?sessionId=0258d42a-ca66-432f-8307-4ed78b103cfc' \
@@ -207,7 +227,9 @@ The steps to send requests are:
       -H 'Postman-Token: 6a41d9fa-e8a1-45a6-a302-64de085ba31c' \
       -d '{"accNumber" : "1234567891", "accPin" : "123456", "balance" : "500000"}'
     ```
+
     and then make the transfer.
+
     ```
     curl -X POST \
       'http://localhost:8080/awantunai/transfer?sessionId=0258d42a-ca66-432f-8307-4ed78b103cfc' \
@@ -218,6 +240,7 @@ The steps to send requests are:
     ```
 
     - View Transactions
+
     ```
     curl -X GET \
       'http://localhost:8080/awantunai/transactions?sessionId=0258d42a-ca66-432f-8307-4ed78b103cfc' \
@@ -226,6 +249,7 @@ The steps to send requests are:
     ```
 
     - View Transactions from particular account
+
     ```
     curl -X GET \
       'http://localhost:8080/awantunai/transactions/1?sessionId=0258d42a-ca66-432f-8307-4ed78b103cfc' \
