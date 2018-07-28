@@ -8,10 +8,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.Date;
-import java.util.Set;
 
 @Entity
-@Table(name = "transaction")
+@Table(name = "transactions")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"},allowGetters = true)
 public class Transaction{
@@ -19,10 +18,9 @@ public class Transaction{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // @ManyToOne
+    // @JoinColumn(name = "account_id")
     // private Account account;
-    @NotNull(message = "accNumber can not be null")
-    @Size(min = 10, max = 10)
-    private String accNumber;
 
     @NotNull(message = "type can not be null")
     @Min(0)
@@ -52,22 +50,21 @@ public class Transaction{
     @LastModifiedDate
     private Date updatedAt;
 
-    // @ManyToOne
-    // @JoinColumn(name = "account_number")
     // public Account getAccount() {
     //   return account;
     // }
-
+    //
     // public void setAccount(Account account) {
     //   this.account = account;
     // }
 
-    public String getAccNumber() {
-      return accNumber;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return id;
     }
 
-    public void setAccNumber(String accNumber) {
-      this.accNumber = accNumber;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Integer getType() {

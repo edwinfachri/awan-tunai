@@ -7,10 +7,13 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 // import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 // import org.springframework.security.crypto.password.PasswordEncoder;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "accounts")
@@ -21,10 +24,12 @@ public class Account{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // private User user;
+    @JsonBackReference
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    // private Set<Transaction> transactions;
-
+    @Column(unique = true)
     @NotNull(message = "Account Number can not be null")
     @Size(min = 10, max = 10)
     private String accNumber;
@@ -49,25 +54,46 @@ public class Account{
     @LastModifiedDate
     private Date updatedAt;
 
+    public User getUser() {
+      return user;
+    }
 
-    // @ManyToOne
-    // @JoinColumn(name = "user_id")
-    // public User getUser() {
-    //   return user;
-    // }
+    public void setUser(User user) {
+      this.user = user;
+    }
 
-    // public void setUser(User user) {
-    //   this.user = user;
-    // }
-
-    // @OneToMany(mappedBy = "transaction", cascade = CascadeType.ALL)
-    // public Set<Transaction> getTransactions() {
-    //   return transaction;
-    // }
+    // @OneToMany(mappedBy="transaction")
+    // private List<Transaction> transactions;
     //
-    // public void setTransactions(Set<Transaction> transactions) {
+    // public List<Transaction> getTransactions() {
+    //   return transactions;
+    // }
+
+    // public void setTransactions(List<Transaction> transactions) {
     //   this.transactions = transactions;
     // }
+
+    private Account() { } // JPA only
+
+    public Account(final User user,
+                   final String accNumber,
+                   final String accPin,
+                   final Integer balance
+    ) {
+        this.user = user;
+        this.accNumber = accNumber;
+        this.accPin = accPin;
+        this.balance = balance;
+    }
+
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getAccNumber() {
       return accNumber;

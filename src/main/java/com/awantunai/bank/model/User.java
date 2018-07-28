@@ -4,11 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.util.Date;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -18,8 +19,6 @@ public class User{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    // private Set<Account> accounts;
 
     @NotBlank
     @Size(min = 3, max = 100)
@@ -51,14 +50,41 @@ public class User{
     @LastModifiedDate
     private Date updatedAt;
 
-    // @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    // public Set<Account> getAccounts() {
-    //   return accounts;
-    // }
-    //
-    // public void setAccounts(Set<Account> accounts) {
-    //   this.accounts = accounts;
-    // }
+    @JsonManagedReference
+    @OneToMany(mappedBy="user", fetch = FetchType.LAZY)
+    private List<Account> accounts;
+
+    private User() { } // JPA only
+
+    public User(final String firstName,
+                final String lastName,
+                final Date birthDate,
+                final String phone,
+                final String address
+    ) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
+        this.phone = phone;
+        this.address = address;
+    }
+
+    public List<Account> getAccounts() {
+      return accounts;
+    }
+
+    public void setAccounts(List<Account> accounts) {
+      this.accounts = accounts;
+    }
+
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getFirstName() {
       return firstName;

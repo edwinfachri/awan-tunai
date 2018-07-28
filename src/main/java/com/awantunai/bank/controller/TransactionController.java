@@ -59,26 +59,26 @@ public class TransactionController {
       }
     }
 
-    // Create a Transfer Transaction
-    @PostMapping("/transactions/transfer")
-    public ResponseEntity<?> transfer(@RequestParam("sessionId") String sessionId, @Valid @RequestBody Transaction transaction) {
-      // Check if Admin is logged in
-      if (!adminController.findAdminBySessionId(sessionId)) {
-        return ResponseEntity.badRequest().body("Please login first.");
-      }
-
-      try {
-        Account sender = accountRepository.findByAccNumber(transaction.getAccNumber());
-        sender.setBalance(sender.getBalance() - transaction.getAmount());
-        Account receiver = accountRepository.findByAccNumber(transaction.getDestination());
-        receiver.setBalance(receiver.getBalance() + transaction.getAmount());
-        Account updateSender = accountRepository.save(sender);
-        Account updateReceiver = accountRepository.save(receiver);
-        return ResponseEntity.ok().body(transactionRepository.save(transaction));
-      } catch (Exception e) {
-        return ResponseEntity.badRequest().body("Transaction failed.");
-      }
-    }
+    // // Create a Transfer Transaction
+    // @PostMapping("/transactions/transfer")
+    // public ResponseEntity<?> transfer(@RequestParam("sessionId") String sessionId, @Valid @RequestBody Transaction transaction) {
+    //   // Check if Admin is logged in
+    //   if (!adminController.findAdminBySessionId(sessionId)) {
+    //     return ResponseEntity.badRequest().body("Please login first.");
+    //   }
+    //
+    //   try {
+    //     Account sender = accountRepository.findByAccNumber(transaction.getAccNumber());
+    //     sender.setBalance(sender.getBalance() - transaction.getAmount());
+    //     Account receiver = accountRepository.findByAccNumber(transaction.getDestination());
+    //     receiver.setBalance(receiver.getBalance() + transaction.getAmount());
+    //     Account updateSender = accountRepository.save(sender);
+    //     Account updateReceiver = accountRepository.save(receiver);
+    //     return ResponseEntity.ok().body(transactionRepository.save(transaction));
+    //   } catch (Exception e) {
+    //     return ResponseEntity.badRequest().body("Transaction failed.");
+    //   }
+    // }
 
     // Get a Transaction
     @GetMapping("/transactions/{id}")

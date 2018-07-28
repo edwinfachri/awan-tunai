@@ -47,6 +47,29 @@ public class Admin{
     @LastModifiedDate
     private Date updatedAt;
 
+    private Admin() { } // JPA only
+
+    public Admin(final String username,
+                 final String password,
+                 final Long employeeId,
+                 final String sessionId,
+                 final Integer status
+    ) {
+        this.username = username;
+        this.password = password;
+        this.employeeId = employeeId;
+        this.sessionId = sessionId;
+        this.status = status;
+    }
+
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getUsername() {
       return username;
