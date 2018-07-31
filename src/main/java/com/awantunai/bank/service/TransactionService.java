@@ -16,33 +16,81 @@ public class TransactionService {
     private final static Logger logger = LoggerFactory.getLogger(TransactionService.class);
 
     private final JdbcTemplate jdbcTemplate;
+    private final AccountService accountService;
 
-    public TransactionService(JdbcTemplate jdbcTemplate) {
+    public TransactionService(JdbcTemplate jdbcTemplate,
+                              AccountService accountService) {
         this.jdbcTemplate = jdbcTemplate;
+        this.accountService = accountService;
     }
 
     // Transfer money from account
     @Transactional
     public void transfer(String accountId, Integer amount, String destinationId, String note) {
-        logger.info(accountId + " transfered "+ amount +" to " + destinationId);
-        jdbcTemplate.update("insert into transactions(account_id, amount, destination_id, note, type, created_at, updated_at) values (?,?,?,?,?,?)"
-        , accountId, amount, destinationId, note, 3, LocalDateTime.now(), LocalDateTime.now());
+        try {
+          String acc_id = accountService.findAccount(accountId);
+          if (acc_id == "null") {
+            logger.error("Sender account not found");
+            return;
+          }
+
+          String des_id = accountService.findAccount(destinationId);
+          if (des_id == "null") {
+            logger.error("Receiver account not found");
+            return;
+          }
+
+          jdbcTemplate.update("insert into transactions(account_id, amount, destination, note, type, created_at, updated_at) values (?,?,?,?,?,?,?)"
+          , acc_id, amount, des_id, note, 3, LocalDateTime.now(), LocalDateTime.now());
+          jdbcTemplate.update("update accounts set balance = balance - ? where id = ?", amount, acc_id);
+          jdbcTemplate.update("update accounts set balance = balance + ? where id = ?", amount, des_id);
+          logger.info(accountId + " transfered "+ amount +" to " + destinationId);
+        } catch (Exception e) {
+          logger.error("Transaction Failed: "+e);
+        }
+
     }
 
     // Withdraw money from account
     @Transactional
     public void withdraw(String accountId, Integer amount) {
-        logger.info(accountId + " withdraw "+ amount);
-        jdbcTemplate.update("insert into transactions(account_id, amount, destination_id, type, created_at, updated_at) values (?,?,?,?,?,?)"
-        , accountId, amount, accountId, 2, LocalDateTime.now(), LocalDateTime.now());
+        try {
+          String acc_id = accountService.findAccount(accountId);
+          if (acc_id == "null") {
+            logger.error("Sender account not found");
+            return;
+          }
+
+
+          jdbcTemplate.update("insert into transactions(account_id, amount, destination, type, created_at, updated_at) values (?,?,?,?,?,?)"
+          , acc_id, amount, acc_id, 2, LocalDateTime.now(), LocalDateTime.now());
+          jdbcTemplate.update("update accounts set balance = balance - ? where id = ?", amount, acc_id);
+          logger.info(accountId + " withdraw "+ amount);
+        } catch (Exception e) {
+          logger.error("Transaction Failed: "+e);
+        }
+
     }
 
     // Deposit money to account
     @Transactional
     public void deposit(String accountId, Integer amount) {
-        logger.info(accountId + " deposit "+ amount);
-        jdbcTemplate.update("insert into transactions(account_id, amount, destination_id, type, created_at, updated_at) values (?,?,?,?,?,?)"
-        , accountId, amount, accountId, 1, LocalDateTime.now(), LocalDateTime.now());
+        try {
+          String acc_id = accountService.findAccount(accountId);
+          if (acc_id == "null") {
+            logger.error("Sender account not found");
+            return;
+          }
+
+
+          jdbcTemplate.update("insert into transactions(account_id, amount, destination, type, created_at, updated_at) values (?,?,?,?,?,?)"
+          , acc_id, amount, acc_id, 1, LocalDateTime.now(), LocalDateTime.now());
+          jdbcTemplate.update("update accounts set balance = balance + ? where id = ?", amount, acc_id);
+          logger.info(accountId + " deposit "+ amount);
+        } catch (Exception e) {
+          logger.error("Transaction Failed: "+e);
+        }
+
     }
 
     // Return all transactionname of transaction

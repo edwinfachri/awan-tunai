@@ -24,11 +24,21 @@ public class UserService {
 
     // Create a User
     @Transactional
-    public void createUser(String firstName, String lastName, String address, Date birthDate, String phone) {
-        logger.info("User " + firstName +" " + lastName + " is created...");
-        jdbcTemplate.update("insert into users(first_name, last_name, address, birth_date, phone, created_at, updated_at) values (?,?,?,?,?,?)"
-        , firstName, lastName, address, birthDate, phone, LocalDateTime.now(), LocalDateTime.now());
+    public void createUser(String firstName, String lastName, String address, String birthDate, String phone) {
+        try {
+          logger.info("User " + firstName +" " + lastName + " is created...");
+          jdbcTemplate.update("insert ignore into users(first_name, last_name, address, birth_date, phone, created_at, updated_at) values (?,?,?,?,?,?,?)"
+          , firstName, lastName, address, birthDate, phone, LocalDateTime.now(), LocalDateTime.now());
+        } catch (Exception e) {
+          logger.error("Transaction Failed: "+e);
+        }
+
     }
+
+    // public List<Long> getUserId(String firstName, String lastName, String address, String birthDate, String phone) {
+    //     return jdbcTemplate.query("select id from users where first_name = ? and last_name = ?and phone = ?", firstName, lastName, phone,
+    //                 (rs, rowNum) -> rs.getLong("id"));
+    // }
 
     // Return all username of user
     // public List<String> findAllUsers() {

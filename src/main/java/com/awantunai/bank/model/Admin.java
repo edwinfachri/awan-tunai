@@ -20,7 +20,8 @@ public class Admin{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    
+    @Column(unique = true)
     @NotNull(message = "Username can not be null")
     @Size(min = 6, max = 50)
     private String username;
