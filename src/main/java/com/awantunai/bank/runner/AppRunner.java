@@ -4,12 +4,21 @@ import com.awantunai.bank.service.AdminService;
 import com.awantunai.bank.service.UserService;
 import com.awantunai.bank.service.AccountService;
 import com.awantunai.bank.service.TransactionService;
+import com.awantunai.bank.BankApplication;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
+
+
+////
+
+import com.awantunai.bank.rabbitmq.Receiver;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import java.util.concurrent.TimeUnit;
+
 
 import java.lang.Long;
 
@@ -22,25 +31,39 @@ class AppRunner implements CommandLineRunner {
     private final UserService userService;
     private final AccountService accountService;
     private final TransactionService transactionService;
+    private final BankApplication bankApplication;
+
+    private final RabbitTemplate rabbitTemplate;
+    private final Receiver receiver;
 
     public AppRunner(AdminService adminService,
                      UserService userService,
                      AccountService accountService,
-                     TransactionService transactionService) {
+                     TransactionService transactionService,
+
+                     BankApplication bankApplication,
+                     Receiver receiver,
+                     RabbitTemplate rabbitTemplate) {
         this.adminService = adminService;
         this.userService = userService;
         this.accountService = accountService;
         this.transactionService = transactionService;
+        this.receiver = receiver;
+        this.rabbitTemplate = rabbitTemplate;
+        this.bankApplication = bankApplication;
     }
 
     @Override
     public void run(String... args) throws Exception {
-        adminService.createAdmin("Alice", "Alice", 1);
+        adminService.createAdmin("Alice", "Alice11", Long.valueOf(1));
         userService.createUser("Edwin", "Wicaksono", "Taman Anyelir", "1994-09-17", "085959336191");
         accountService.createAccount("1234567890", "123456", 500000, Long.valueOf(1));
         transactionService.transfer("1234567890", 5000, "1234567890", "coba");
         transactionService.withdraw("1234567890", 1000);
         transactionService.deposit("1234567890", 50);
+
+        rabbitTemplate.convertAndSend(bankApplication.topicExchangeName, "foo.bar.baz", "Hello from RabbitMQ!");
+        receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
 
         // Assert.isTrue(adminService.findAllAdmins().size() == 7,
         //         "First admin should work with no problem");
@@ -77,5 +100,7 @@ class AppRunner implements CommandLineRunner {
         // Assert.isTrue(adminService.findAllAdmins().size() == 3,
         //         "'null' should have triggered a rollback");
     }
+
+
 
 }

@@ -3,6 +3,7 @@ package com.awantunai.bank.service;
 import java.util.List;
 
 import com.awantunai.bank.model.Admin;
+import com.awantunai.bank.helper.Validation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,21 +20,30 @@ public class AdminService {
 
     private final JdbcTemplate jdbcTemplate;
 
-    public AdminService(JdbcTemplate jdbcTemplate) {
+    private final Validation validate;
+
+    public AdminService(JdbcTemplate jdbcTemplate, Validation validate) {
         this.jdbcTemplate = jdbcTemplate;
+        this.validate = validate;
     }
 
     // Create an admin
     @Transactional
-    public void createAdmin(String username, String password, Integer employeeId) {
+    public void createAdmin(String username, String password, Long employeeId) {
         try {
+          if (!validate.usernameValidation(username)) {
+              return;
+          }
+
+          if (!validate.passwordValidation(password)) {
+              return;
+          }
+
           jdbcTemplate.update("insert into admins(username, password, employee_id, status, created_at, updated_at) values (?,?,?,?,?,?)"
           , username, password, employeeId, 0, LocalDateTime.now(), LocalDateTime.now());
           logger.info("Admin " + username + " is created...");
         } catch (Exception e) {
           logger.error("Transaction Failed: "+e);
         }
-
     }
-
 }

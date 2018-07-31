@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import com.awantunai.bank.helper.Validation;
 
 import java.time.LocalDateTime;
 
@@ -16,19 +17,36 @@ public class AccountService {
     private final static Logger logger = LoggerFactory.getLogger(AccountService.class);
 
     private final JdbcTemplate jdbcTemplate;
+
     private final UserService userService;
 
+    private final Validation validate;
+
     public AccountService(JdbcTemplate jdbcTemplate,
-                          UserService userService
+                          UserService userService,
+                          Validation validate
     ) {
         this.jdbcTemplate = jdbcTemplate;
         this.userService = userService;
+        this.validate = validate;
     }
 
     // Create an account
     @Transactional
     public void createAccount(String accNumber, String accPin, Integer balance,
-                              Long userId) {
+                              Long userId)
+    {
+
+        if (!validate.accNumberValidation(accNumber)) {
+            return;
+        }
+        if (!validate.accPinValidation(accPin)) {
+            return;
+        }
+        if (!validate.amountValidation(balance)) {
+            return;
+        }
+
         try {
           jdbcTemplate.update("insert into accounts(acc_number, acc_pin, balance, user_id, created_at, updated_at) values (?,?,?,?,?,?)"
           , accNumber, accPin, balance, userId, LocalDateTime.now(), LocalDateTime.now());

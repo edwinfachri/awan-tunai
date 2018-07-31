@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import com.awantunai.bank.helper.Validation;
+
 
 import java.time.LocalDateTime;
 
@@ -16,18 +18,37 @@ public class TransactionService {
     private final static Logger logger = LoggerFactory.getLogger(TransactionService.class);
 
     private final JdbcTemplate jdbcTemplate;
+
     private final AccountService accountService;
 
+    private final Validation validate;
+
+
     public TransactionService(JdbcTemplate jdbcTemplate,
-                              AccountService accountService) {
+                              AccountService accountService,
+                              Validation validate) {
         this.jdbcTemplate = jdbcTemplate;
         this.accountService = accountService;
+        this.validate = validate;
     }
 
     // Transfer money from account
     @Transactional
     public void transfer(String accountId, Integer amount, String destinationId, String note) {
         try {
+
+          if (!validate.accNumberValidation(accountId)) {
+              return;
+          }
+
+          if (!validate.amountValidation(amount)) {
+              return;
+          }
+
+          if (!validate.accNumberValidation(destinationId)) {
+              return;
+          }
+
           String acc_id = accountService.findAccount(accountId);
           if (acc_id == "null") {
             logger.error("Sender account not found");
@@ -92,6 +113,12 @@ public class TransactionService {
         }
 
     }
+
+
+
+
+
+
 
     // Return all transactionname of transaction
     // public List<String> findAllTransactions() {
