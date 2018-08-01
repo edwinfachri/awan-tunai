@@ -60,16 +60,11 @@ public class UserService {
 
     }
 
-
-    // public List<Long> getUserId(String firstName, String lastName, String address, String birthDate, String phone) {
-    //     return jdbcTemplate.query("select id from users where first_name = ? and last_name = ?and phone = ?", firstName, lastName, phone,
-    //                 (rs, rowNum) -> rs.getLong("id"));
-    // }
-
-    // Return all username of user
-    // public List<String> findAllUsers() {
-    //     return jdbcTemplate.query("select first_name from users",
-    //             (rs, rowNum) -> rs.getString("username"));
-    // }
+    @Transactional
+    public Integer countUser() {
+        String sql = "select count(*) from users";
+        return (Integer) jdbcTemplate.queryForObject(
+                sql, Integer.class);
+    }
 
 }

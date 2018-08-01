@@ -55,6 +55,7 @@ public class AccountService {
         }
     }
 
+    @Transactional
     public String findAccount(String accNumber) {
         String sql = "select case when count(1) > 0 then id else 'null' end as id from accounts where acc_number=?";
         String account_id = (String) jdbcTemplate.queryForObject(
@@ -62,10 +63,11 @@ public class AccountService {
         return account_id;
     }
 
-    // Return all accountname of admin
-    // public List<String> findAllAccounts() {
-    //     return jdbcTemplate.query("select accountname from admins",
-    //             (rs, rowNum) -> rs.getString("accountname"));
-    // }
+    @Transactional
+    public Integer countAccount() {
+        String sql = "select count(*) from accounts";
+        return (Integer) jdbcTemplate.queryForObject(
+                sql, Integer.class);
+    }
 
 }

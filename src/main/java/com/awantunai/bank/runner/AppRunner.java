@@ -16,8 +16,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
 
-////
-
 import com.awantunai.bank.rabbitmq.Receiver;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import java.util.concurrent.TimeUnit;
@@ -58,17 +56,35 @@ class AppRunner implements CommandLineRunner {
         this.bankApplication = bankApplication;
     }
 
+    // AppRunner Works as runner to the rabbitmq
+
     @Override
     public void run(String... args) throws Exception {
-        adminService.createAdmin("Alice", "Alice11", Long.valueOf(1));
+        adminService.createAdmin("edwin", "edwin12", Long.valueOf(1));
+        Assert.isTrue(adminService.countAdmin() == 1,
+                "Create first admin and assert the data number is 1");
+        adminService.createAdmin("edwin", "edwin12", Long.valueOf(1));
+        Assert.isTrue(adminService.countAdmin() == 1,
+                "Create second admin with the same username and assert the data number is not changing");
+
+        Integer userCount = userService.countUser();
         userService.createUser("Edwin", "Wicaksono", "Taman Anyelir", "1994-09-17", "085959336191");
+        Assert.isTrue(userService.countUser() > userCount,
+                "Create user and assert that the data number is changing");
         accountService.createAccount("1234567890", "123456", 500000, Long.valueOf(1));
+
+        Assert.isTrue(accountService.countAccount() == 1,
+                "Create account and assert that the data number is changing");
+        accountService.createAccount("1234567890", "123456", 500000, Long.valueOf(1));
+        Assert.isTrue(accountService.countAccount() == 1,
+                "Create second account with the same accountnumber and assert the data number is not changing");
+
+        Integer transactionCount = transactionService.countTransaction();
         transactionService.transfer("1234567890", 5000, "1234567890", "coba");
         transactionService.withdraw("1234567890", 1000);
         transactionService.deposit("1234567890", 50);
-
-        rabbitTemplate.convertAndSend(bankApplication.topicExchangeName, "foo.bar.baz", "Hello from RabbitMQ!");
-        receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
+        Assert.isTrue(transactionService.countTransaction() == transactionCount + 3,
+                "Create transaction and assert that the data number is changing");
 
         Iterator all_transactions = transactionService.findAllTransactions();
         while (all_transactions.hasNext()) {
@@ -81,40 +97,6 @@ class AppRunner implements CommandLineRunner {
           Object transaction = transactions.next();
           logger.info(transaction.toString());
         }
-
-
-        // Assert.isTrue(adminService.findAllAdmins().size() == 7,
-        //         "First admin should work with no problem");
-        // logger.info("Alice, Bob and Carol have been booked");
-        // try {
-        //     adminService.book("Chris", "Samuel");
-        // } catch (RuntimeException e) {
-        //     logger.info("v--- The following exception is expect because 'Samuel' is too " +
-        //             "big for the DB ---v");
-        //     logger.error(e.getMessage());
-        // }
-        //
-
-        // logger.info("You shouldn't see Chris or Samuel. Samuel violated DB constraints, " +
-        //         "and Chris was rolled back in the same TX");
-        // Assert.isTrue(adminService.findAllAdmins().size() == 3,
-        //         "'Samuel' should have triggered a rollback");
-        //
-        // try {
-        //     adminService.book("Buddy", null);
-        // } catch (RuntimeException e) {
-        //     logger.info("v--- The following exception is expect because null is not " +
-        //             "valid for the DB ---v");
-        //     logger.error(e.getMessage());
-        // }
-        //
-        // for (String person : adminService.findAllAdmins()) {
-        //     logger.info("So far, " + person + " is booked.");
-        // }
-        // logger.info("You shouldn't see Buddy or null. null violated DB constraints, and " +
-        //         "Buddy was rolled back in the same TX");
-        // Assert.isTrue(adminService.findAllAdmins().size() == 3,
-        //         "'null' should have triggered a rollback");
     }
 
 

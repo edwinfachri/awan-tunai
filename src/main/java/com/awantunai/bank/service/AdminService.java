@@ -46,4 +46,11 @@ public class AdminService {
           logger.error("Transaction Failed: "+e);
         }
     }
+
+    @Transactional
+    public Integer countAdmin() {
+        String sql = "select count(*) from admins";
+        return (Integer) jdbcTemplate.queryForObject(
+                sql, Integer.class);
+    }
 }

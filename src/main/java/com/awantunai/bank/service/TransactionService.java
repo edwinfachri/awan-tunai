@@ -137,4 +137,11 @@ public class TransactionService {
       return transactions_iterator;
     }
 
+    @Transactional
+    public Integer countTransaction() {
+        String sql = "select count(*) from transactions";
+        return (Integer) jdbcTemplate.queryForObject(
+                sql, Integer.class);
+    }
+
 }
