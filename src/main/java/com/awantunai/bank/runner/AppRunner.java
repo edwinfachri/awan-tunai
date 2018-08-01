@@ -61,22 +61,20 @@ class AppRunner implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         adminService.createAdmin("edwin", "edwin12", Long.valueOf(1));
-        Assert.isTrue(adminService.countAdmin() == 1,
-                "Create first admin and assert the data number is 1");
+        Integer adminCount = adminService.countAdmin();
         adminService.createAdmin("edwin", "edwin12", Long.valueOf(1));
-        Assert.isTrue(adminService.countAdmin() == 1,
+        Assert.isTrue(adminService.countAdmin() == adminCount,
                 "Create second admin with the same username and assert the data number is not changing");
 
         Integer userCount = userService.countUser();
         userService.createUser("Edwin", "Wicaksono", "Taman Anyelir", "1994-09-17", "085959336191");
         Assert.isTrue(userService.countUser() > userCount,
                 "Create user and assert that the data number is changing");
-        accountService.createAccount("1234567890", "123456", 500000, Long.valueOf(1));
 
-        Assert.isTrue(accountService.countAccount() == 1,
-                "Create account and assert that the data number is changing");
         accountService.createAccount("1234567890", "123456", 500000, Long.valueOf(1));
-        Assert.isTrue(accountService.countAccount() == 1,
+        Integer accountCount = accountService.countAccount();
+        accountService.createAccount("1234567890", "123456", 500000, Long.valueOf(1));
+        Assert.isTrue(accountService.countAccount() == accountCount,
                 "Create second account with the same accountnumber and assert the data number is not changing");
 
         Integer transactionCount = transactionService.countTransaction();
@@ -97,6 +95,17 @@ class AppRunner implements CommandLineRunner {
           Object transaction = transactions.next();
           logger.info(transaction.toString());
         }
+
+        rabbitTemplate.convertAndSend(bankApplication.topicExchangeName, "foo.bar.baz", "login;edwin;edwin12");
+        rabbitTemplate.convertAndSend(bankApplication.topicExchangeName, "foo.bar.baz", "create admin;rabbitmq;rabbitmq12;1");
+        rabbitTemplate.convertAndSend(bankApplication.topicExchangeName, "foo.bar.baz", "create user;coba nama;nama coba;ini alamatnya;1994-09-17;085959336191");
+        rabbitTemplate.convertAndSend(bankApplication.topicExchangeName, "foo.bar.baz", "create account;0987654321;123456;500000;1");
+        rabbitTemplate.convertAndSend(bankApplication.topicExchangeName, "foo.bar.baz", "transfer;1234567890;5000;0987654321;coba");
+        rabbitTemplate.convertAndSend(bankApplication.topicExchangeName, "foo.bar.baz", "deposit;1234567890;500");
+        rabbitTemplate.convertAndSend(bankApplication.topicExchangeName, "foo.bar.baz", "withdraw;0987654321;200");
+        rabbitTemplate.convertAndSend(bankApplication.topicExchangeName, "foo.bar.baz", "logout");
+        receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
+
     }
 
 

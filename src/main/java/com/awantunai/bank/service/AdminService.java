@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Component
 public class AdminService {
@@ -45,6 +46,23 @@ public class AdminService {
         } catch (Exception e) {
           logger.error("Transaction Failed: "+e);
         }
+    }
+
+    // Login as an admin
+    @Transactional
+    public String login(String username, String password) {
+
+      String sql = "select count(*) from admins where username like ? and password like ?";
+      Integer exist = (Integer)jdbcTemplate.queryForObject(
+			sql, new Object[] { username, password }, Integer.class);
+      if (exist > 0) {
+        String uid = UUID.randomUUID().toString();
+        jdbcTemplate.update("update admins set session_id = ? where username like ? and password like ?", uid, username, password);
+        logger.info("Logged In");
+        return uid;
+      }
+        logger.error("Wrong Username or Password");
+        return "";
     }
 
     @Transactional
