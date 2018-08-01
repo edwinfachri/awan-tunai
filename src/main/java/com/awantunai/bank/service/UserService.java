@@ -47,19 +47,18 @@ public class UserService {
               return;
           }
 
+          String lowerFirstName = firstName.toLowerCase();
+          String lowerLastName = lastName.toLowerCase();
+          String lowerAddress = address.toLowerCase();
+
           jdbcTemplate.update("insert ignore into users(first_name, last_name, address, birth_date, phone, created_at, updated_at) values (?,?,?,?,?,?,?)"
-          , firstName, lastName, address, birthDate, phone, LocalDateTime.now(), LocalDateTime.now());
-          logger.info("User " + firstName +" " + lastName + " is created...");
+          , lowerFirstName, lowerLastName, lowerAddress, birthDate, phone, LocalDateTime.now(), LocalDateTime.now());
+          logger.info("User " + lowerFirstName +" " + lowerLastName + " is created...");
         } catch (Exception e) {
           logger.error("Transaction Failed: "+e);
         }
 
     }
-
-    public String lowerCase(String str) {
-      return str.toLowerCase();
-    }
-
 
 
     // public List<Long> getUserId(String firstName, String lastName, String address, String birthDate, String phone) {

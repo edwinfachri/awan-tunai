@@ -56,6 +56,14 @@ public class Transaction{
     }
 
     public Transaction(
+      String destination,
+      Integer amount
+    ) {
+      this.destination = destination;
+      this.amount = amount;
+    }
+
+    public Transaction(
               Account account,
               Integer type,
               Integer amount,

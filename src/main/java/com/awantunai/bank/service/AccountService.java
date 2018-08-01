@@ -57,9 +57,9 @@ public class AccountService {
 
     public String findAccount(String accNumber) {
         String sql = "select case when count(1) > 0 then id else 'null' end as id from accounts where acc_number=?";
-        String streetName = (String) jdbcTemplate.queryForObject(
+        String account_id = (String) jdbcTemplate.queryForObject(
                 sql, new Object[] { accNumber }, String.class);
-        return streetName;
+        return account_id;
     }
 
     // Return all accountname of admin

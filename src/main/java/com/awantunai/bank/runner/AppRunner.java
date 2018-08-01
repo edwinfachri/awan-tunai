@@ -6,6 +6,9 @@ import com.awantunai.bank.service.AccountService;
 import com.awantunai.bank.service.TransactionService;
 import com.awantunai.bank.BankApplication;
 
+import com.awantunai.bank.model.Transaction;
+
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -21,6 +24,8 @@ import java.util.concurrent.TimeUnit;
 
 
 import java.lang.Long;
+import java.util.List;
+import java.util.Iterator;
 
 @Component
 class AppRunner implements CommandLineRunner {
@@ -65,6 +70,19 @@ class AppRunner implements CommandLineRunner {
         rabbitTemplate.convertAndSend(bankApplication.topicExchangeName, "foo.bar.baz", "Hello from RabbitMQ!");
         receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
 
+        Iterator all_transactions = transactionService.findAllTransactions();
+        while (all_transactions.hasNext()) {
+          Object transaction = all_transactions.next();
+          logger.info(transaction.toString());
+        }
+
+        Iterator transactions = transactionService.findTransactions("1234567890");
+        while (transactions.hasNext()) {
+          Object transaction = transactions.next();
+          logger.info(transaction.toString());
+        }
+
+
         // Assert.isTrue(adminService.findAllAdmins().size() == 7,
         //         "First admin should work with no problem");
         // logger.info("Alice, Bob and Carol have been booked");
@@ -76,9 +94,7 @@ class AppRunner implements CommandLineRunner {
         //     logger.error(e.getMessage());
         // }
         //
-        // for (Admin admin : adminService.findAllAdmins()) {
-        //     logger.info("So far, " + admin.getUsername() + " is booked.");
-        // }
+
         // logger.info("You shouldn't see Chris or Samuel. Samuel violated DB constraints, " +
         //         "and Chris was rolled back in the same TX");
         // Assert.isTrue(adminService.findAllAdmins().size() == 3,
